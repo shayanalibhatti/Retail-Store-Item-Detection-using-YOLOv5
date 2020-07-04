@@ -57,7 +57,7 @@ Finally, we get a link to download the generated data with label files. This lin
 The model was trained on Google Colab Pro notebook with Tesla P100 16GB Graphics Card. It costs $9.99 and it is good for a month's use. Google Colab notebook can also be used which is free but usage session time is limited.
 
 ## Code
-I recommend using the Google Colab notebook provided by Roboflow.ai at https://www.models.roboflow.ai/object-detection/yolov5.
+The code is present in jupyter notebook in attached files. However, it is recommended to copy the whole code in Google Colab notebook.
 
 It is originally trained for COCO dataset but can be tweaked for custom tasks which is what I did. I started by cloning YOLOv5 and installing the dependencies mentioned in requirements.txt file. Also, the model is built for Pytorch, so I import that.
 
