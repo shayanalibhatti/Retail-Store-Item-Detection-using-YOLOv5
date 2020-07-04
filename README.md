@@ -18,7 +18,8 @@ In this article, I will only focus on the use of YOLOv5 for retail item detectio
 ## Objective
 To use YOLOv5 to draw bounding boxes over retail products in pictures using SKU110k dataset.
 
-![Result image](https://github.com/shayanalibhatti/Retail-Store-Item-Detection-using-YOLOv5/blob/master/results.png)
+![Result image] (https://github.com/shayanalibhatti/Retail-Store-Item-Detection-using-YOLOv5/blob/master/results.png)
+
 Fig 1.2: Store shelf image (on left) vs desired output with bounding box drawn on objects (right)
 
 ## Dataset
@@ -41,6 +42,7 @@ From the dataset, I took only 998 images from the training set and went to Robof
 Preprocessing of images includes resizing them to 416x416x3. This is done on Roboflow's platform. An annotated, resized image is shown in figure below:
 
 ![Annotated image] (https://github.com/shayanalibhatti/Retail-Store-Item-Detection-using-YOLOv5/blob/master/roboflow_data_image_annotated.jpg)
+
 Fig 1.3: Image annotated by Roboflow
 
 ### Automatic Annotation
@@ -91,6 +93,7 @@ The following 3 parameters are commonly used for object detection tasks:
 It is seen that Generalized Intersection over Union (GIoU) loss and objectness loss decrease both for training and validation. Mean Average Precision (mAP) however is at 0.7 for bounding box IoU threshold of 0.5. Recall stands at 0.8 as shown below:
 
 ![Observations] (https://github.com/shayanalibhatti/Retail-Store-Item-Detection-using-YOLOv5/blob/master/observations.png)
+
 Fig 1.4: Observations of important parameters of model training
 
 Now comes the part where we check how our model is doing on test set images using the following code:
@@ -100,6 +103,7 @@ Now comes the part where we check how our model is doing on test set images usin
 Following images show the result of our YOLOv5 algorithm trained to draw bounding boxes on objects. The results are pretty good.
 
 ![results] (https://github.com/shayanalibhatti/Retail-Store-Item-Detection-using-YOLOv5/blob/master/result1.jpg)
+
 Fig 1.5: Original test set image (on left) and bounding boxes drawn images by YOLOv5 (on right) 
 
 ## Conclusion
