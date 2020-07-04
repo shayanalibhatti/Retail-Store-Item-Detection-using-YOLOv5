@@ -19,6 +19,7 @@ In this article, I will only focus on the use of YOLOv5 for retail item detectio
 To use YOLOv5 to draw bounding boxes over retail products in pictures using SKU110k dataset.
 
 ![Result image](https://github.com/shayanalibhatti/Retail-Store-Item-Detection-using-YOLOv5/blob/master/results.png)
+
 Fig 1.2: Store shelf image (on left) vs desired output with bounding box drawn on objects (right)
 
 ## Dataset
