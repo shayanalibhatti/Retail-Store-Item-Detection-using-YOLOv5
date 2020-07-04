@@ -58,31 +58,105 @@ I recommend using the Google Colab notebook provided by Roboflow.ai at https://w
 
 It is originally trained for COCO dataset but can be tweaked for custom tasks which is what I did. I started by cloning YOLOv5 and installing the dependencies mentioned in requirements.txt file. Also, the model is built for Pytorch, so I import that.
 
-<script src="https://gist.github.com/shayanalibhatti/8152783798a97ded9196ca532d04f0e0.js"></script>
+```
+!git clone https://github.com/ultralytics/yolov5  # clone repo
+!pip install -r yolov5/requirements.txt  # install dependencies
+%cd yolov5
+print('Setup complete. Using torch %s %s' % (torch.__version__, torch.cuda.get_device_properties(0) if torch.cuda.is_available() else 'CPU'))
+```
 
-Next, I download the dataset that I created at Roboflow.ai. The following code will download training, test and validation set and annotations too. It also creates a .yaml file which contains paths for training and validation set as well as what classes are present in our data.
+Next, I download the dataset that I created at Roboflow.ai. The following code will download training, test and validation set and annotations too. It also creates a .yaml file which contains paths for training and validation set as well as what classes are present in our data. If you use Roboflow for data, then dont forget to enter the key in code as it is unique per user.
 
-<script src="https://gist.github.com/shayanalibhatti/59de124009e52e38fb37032d373f08da.js"></script>
+```
+# Export code snippet and paste here
+%cd /content
+!curl -L "ADD THE KEY OBTAINED FROM ROBOFLOW" > roboflow.zip; unzip roboflow.zip; rm roboflow.zip
+```
 
 This file tells the model the location path of training and validation set images alongwith the number of classes and the names of classes. For this task, number of classes is "1" and the name of class is "object" as we are only looking to predict bounding boxes. data.yaml file can be seen below:
 
 ### Network Architecture
 Next let's define the network architecture for YOLOv5. It is the same architecture used by the author Glenn Jocher for training on COCO dataset. I didnt change anything in the network. However, few tweaks were needed to change bounding box size, color and also to remove labels otherwise labels would jumble the image because of so many boxes. These tweaks were made in detect.py and utils.py file. The network is saved as custom_yolov5.yaml file.
-<script src="https://gist.github.com/shayanalibhatti/8ad04ae70063c933102e4808e451a2bc.js"></script>
+
+```
+%cd /content/
+##write custom model .yaml
+#you can configure this based on other YOLOv5 models in the models directory
+with open('yolov5/models/custom_yolov5s.yaml', 'w') as f:
+  # parameters
+  f.write('nc: ' + num_classes + '\n')
+  #f.write('nc: ' + str(len(class_labels)) + '\n')
+  f.write('depth_multiple: 0.33'  + '\n') # model depth multiple
+  f.write('width_multiple: 0.50'  + '\n')  # layer channel multiple
+  f.write('\n')
+  f.write('anchors:' + '\n')
+  f.write('  - [10,13, 16,30, 33,23] ' + '\n')
+  f.write('  - [30,61, 62,45, 59,119]' + '\n')
+  f.write('  - [116,90, 156,198, 373,326] ' + '\n')
+  f.write('\n')
+
+  f.write('backbone:' + '\n')
+  f.write('  [[-1, 1, Focus, [64, 3]],' + '\n')
+  f.write('   [-1, 1, Conv, [128, 3, 2]],' + '\n')
+  f.write('   [-1, 3, Bottleneck, [128]],' + '\n')
+  f.write('   [-1, 1, Conv, [256, 3, 2]],' + '\n')
+  f.write('   [-1, 9, BottleneckCSP, [256]],' + '\n')
+  f.write('   [-1, 1, Conv, [512, 3, 2]], ' + '\n')
+  f.write('   [-1, 9, BottleneckCSP, [512]],' + '\n')
+  f.write('   [-1, 1, Conv, [1024, 3, 2]],' + '\n')
+  f.write('   [-1, 1, SPP, [1024, [5, 9, 13]]],' + '\n')
+  f.write('   [-1, 6, BottleneckCSP, [1024]],' + '\n')
+  f.write('  ]' + '\n')
+  f.write('\n')
+
+  f.write('head:'  + '\n')
+  f.write('  [[-1, 3, BottleneckCSP, [1024, False]],'  + '\n')
+  f.write('   [-1, 1, nn.Conv2d, [na * (nc + 5), 1, 1, 0]],' + '\n')
+  f.write('   [-2, 1, nn.Upsample, [None, 2, "nearest"]],' + '\n')
+  
+  f.write('   [[-1, 6], 1, Concat, [1]],' + '\n')
+  f.write('   [-1, 1, Conv, [512, 1, 1]],' + '\n')
+  f.write('   [-1, 3, BottleneckCSP, [512, False]],' + '\n')
+  f.write('   [-1, 1, nn.Conv2d, [na * (nc + 5), 1, 1, 0]],' + '\n')
+  
+  f.write('   [-2, 1, nn.Upsample, [None, 2, "nearest"]],' + '\n')
+  f.write('   [[-1, 4], 1, Concat, [1]],' + '\n')
+  f.write('   [-1, 1, Conv, [256, 1, 1]],' + '\n')
+  f.write('   [-1, 3, BottleneckCSP, [256, False]],' + '\n')
+  f.write('   [-1, 1, nn.Conv2d, [na * (nc + 5), 1, 1, 0]],' + '\n')
+  f.write('\n' )
+  f.write('   [[], 1, Detect, [nc, anchors]],' + '\n')
+  f.write('  ]' + '\n')
+
+print('custom model config written!')
+```
 
 ## Training
 Now I start the training process. I defined the image size (img) to be 416x416, batch size 32 and the model is run for 300 epochs. If we dont define weights, they are initialized randomly.
 
-<script src="https://gist.github.com/shayanalibhatti/e87c98639f26a220a115048c4425e9df.js"></script>
+```
+# train yolov5s on custom data for 300 epochs
+%cd /content/yolov5/
+!python train.py --img 416 --batch 32 --epochs 300 --data '../data.yaml' --cfg ./models/custom_yolov5s.yaml --weights '' --name yolov5s_results --nosave --cache
+
+```
 
 It took 4 hours 37 minutes for training to complete on a Tesla P100 16GB GPU provided by Google Colab Pro. After the training is complete, model's weights are saved in Google drive as last_yolov5_results.pt 
 
-<script src="https://gist.github.com/shayanalibhatti/4835a10c2beee450b44a7057869a3135.js"></script>
+```
+from google.colab import drive
+drive.mount('/content/gdrive',force_remount=True)
+%cp /content/yolov5/weights/last_yolov5s_results.pt /content/gdrive/My\ Drive
+```
 
 ## Observations
 We can visualize important evaluation metrics after the model has been trained using the following code:
 
-<script src="https://gist.github.com/shayanalibhatti/353896fa50c5ff77387c2ff707d11696.js"></script>
+```
+# we can also output some older school graphs if the tensor board isn't working for whatever reason... 
+from utils.utils import plot_results; plot_results()  # plot results.txt as results.png
+Image(filename='./results.png', width=1000)  # view results.png
+```
 
 The following 3 parameters are commonly used for object detection tasks:
 · GIoU is the Generalized Intersection over Union which tells how close to the ground truth our bounding box is.
@@ -94,7 +168,11 @@ It is seen that Generalized Intersection over Union (GIoU) loss and objectness l
 Fig 1.4: Observations of important parameters of model training
 
 Now comes the part where we check how our model is doing on test set images using the following code:
-<script src="https://gist.github.com/shayanalibhatti/607fc3c8c8ce490e804f1619c9e980c6.js"></script>
+```
+# when we ran this, we saw .007 second inference time. That is 140 FPS on a TESLA P100!
+%cd /content/yolov5/
+!python detect.py --weights weights/last_yolov5s_results.pt --img 416 --conf 0.4 --source ../test/images
+```
 
 ## Results
 Following images show the result of our YOLOv5 algorithm trained to draw bounding boxes on objects. The results are pretty good.
