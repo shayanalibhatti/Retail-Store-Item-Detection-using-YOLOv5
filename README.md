@@ -180,11 +180,13 @@ Now comes the part where we check how our model is doing on test set images usin
 ```
 
 ## Results
-Following images show the result of our YOLOv5 algorithm trained to draw bounding boxes on objects. The results are pretty good.
+Following images show the result of our YOLOv5 algorithm trained to draw bounding boxes on objects. The results are pretty good. 
 
 ![results](https://github.com/shayanalibhatti/Retail-Store-Item-Detection-using-YOLOv5/blob/master/result1.jpg)
 
 Fig 1.5: Original test set image (on left) and bounding boxes drawn images by YOLOv5 (on right) 
+
+REMEMBER: The model that I have attached was only trained on 998 images. PLEASE train on all the images in SKU dataset for optimum results.
 
 ## Conclusion
 Controversies aside, YOLOv5 performs well and can be customized to suit our needs. However, training the model can take significant GPU power and time. It is recommended to use atleast Google Colab with 16GB GPU or preferably a TPU to speed up the process for training the large dataset.
