@@ -192,3 +192,5 @@ REMEMBER: The model that I have attached was only trained on 998 images. PLEASE 
 Controversies aside, YOLOv5 performs well and can be customized to suit our needs. However, training the model can take significant GPU power and time. It is recommended to use atleast Google Colab with 16GB GPU or preferably a TPU to speed up the process for training the large dataset.
 
 This retail object detector application can be used to keep track of store shelf inventory or for a smart store concept where people pick stuff and get automatically charged for it. YOLOv5's small weight size and good frame rate will pave its way to be first choice for embedded-system based real-time object detection tasks.
+
+Also, please mention my work and give credit if you use it in research or any article. It motivates developers to share their work with the world.
